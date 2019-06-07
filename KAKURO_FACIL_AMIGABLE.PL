@@ -1,5 +1,8 @@
+use warnings;
+use 5.010;
+no warnings 'experimental';
 #EL PROGRAMA PRESENTA INICIALMENTE UN MENU PRINCIPAL DE 2 OPCIONES DE UN JUEGO LOGICO DE ROMPECABEZAS:
-    #OPCION 1: LEER INSTRUCCIONES DEL JUEGO
+    #OPCION 1: LEER instructions DEL JUEGO
     #OPCION 2: JUGAR MODO FACIL
 
 #CUANDO SE ELIGE LA OPCION 2, SE IMPRIME UNA CUADRICULA Y SE PIDE AL USUARIO INGRESAR LAS CASILLAS QUE TIENEN LETRAS.
@@ -11,84 +14,80 @@
 #AL SELECCIONAR LA OPCION 2, MUESTRA AL USUARIO LA RESPUESTA CORRECTA Y PIDE AL USUARIO TECLEAR EL NUMERO "1" PARA REGRESAR
 #AL MENU PRINCIPAL. AQUI ES CUANDO SE PRESENTA LA FALLA. AL PRESIONAR LA TECLA 1, REGRESA AL MENU PRINCIPAL(funcion sub menu)
 #PERO AL MOMENTO DE QUERER VOLVER A ELEGIR LA OPCION 2(JUGAR MODO FACIL), EL PROGRAMA NO AVANZA Y DEJA DE FUNCIONAR. SIN EMBARGO, SI SE ELIJE LA
-# OPCION 1(INSTRUCCIONES), SI ES POSIBLE ACCEDER A ELLAS.
+# OPCION 1(instructions), SI ES POSIBLE ACCEDER A ELLAS.
 
 
-# ES MUY POSIBLE QUE EL PROGRAMA PRESENTE LA FALLA DENTRO DE LA SUBRUTINA JUGAR_DENUEVO_FACIL DE LA FUNCION DE MATRIZ_FACIL.
+# ES MUY POSIBLE QUE EL PROGRAMA PRESENTE LA FALLA DENTRO DE LA SUBRUTINA easy_play_again DE LA FUNCION DE easy_play.
 #SE UTILIZA UNA SENTENCIA GOTO (LINEAS 216, 246, 264) PARA ROMPER LA SUBRUTINA Y REGRESAR AL MENU PRINCIPAL. SIN EMBARGO, NO ES
 #POSIBLE VOLVER A JUGAR DESDE EL MENU PRINCIPAL
 #UNA SEGUNDA VEZ(ES CUANDO EL PROGRAMA DEJA DE FUNCIONAR).
 
 #MENU PRINCIPAL
 sub menu {
-  system ("cls");
+  $menu = 1;
+  system ("clear");
   print("KAKURO\n");
   print("MENU: \n");
-  print("1) Instrucciones del juego \n");
+  print("1) instructions del juego \n");
   print("2) Jugar modo facil \n");
   do {
     print("Escriba la opcion que desea: \n");
     $key = <STDIN>;
-    if (0 >= $key || 3 < $key) {
+    if ($key == 0 || $key > 2) {
       print("OPCION INVALIDA. INTENTE DE NUEVO.\n");  #VALIDACION DE ENTRADA DE DATOS
     }
-  } while (0 >= $key || 3 < $key);
-  if ($key == 1) {
-    system ("cls");
-    goto & instrucciones;
-  }
-  else {
-    if ($key == 2) {
-      goto & matriz_facil;
+    if ($key == 1) {
+      system ("clear");
+      $menu = 0;
+      &instructions;
+    } else {
+      if ($key == 2) {
+        $menu = 0;
+        &easy_play;
+      }
     }
-  }
+  } while ($menu);
 }
 
-sub instrucciones {
-  print ("Hay que rellenar las casillas correspondiente con numeros del 1 al 9, teniendo en cuenta que:\n
-  1. Cada fila o columna debe sumar lo indicado en la casilla.\n
-     Cuando una casilla indica dos valores, separados por '/',\n
-     el valor de la izquiera representa la suma de la fila, y el valor de la derecha la suma de la columna.\n
-  2. No se puede repetir un mismo numero ya sea por fila o columna.\n");
+sub instructions {
+  &read_and_print_file('instructions.txt');
   do {
     print("PRESIONE LA TECLA 1 PARA REGRESAR AL MENU PRINCIPAL\n");
-    $option = <STDIN>;
-    if ($option != 1) {
+    $key = <STDIN>;
+    if ($key != 1) {
       print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
     }
-  } while($option != 1);
-  goto & menu;
+  } while ($key != 1);
+  &menu;
 }
 
 
-sub matriz_facil{
+sub easy_play {
   #CREACION DE LA MATRIZ 3X3 CON NUMEROS ALEATORIOS SIN REPETIR
   for ($i = 1; $i <= 3; $i++) {
     for ($j = 1; $j<=3; $j++) {
-      do {
-        $matriz[$i][$j] = 1+int(rand(9));
-      } while $udes[$matriz[$i][$j]]++;
+      $array[$i][$j] = 1 + int(rand(9));
     }
   }
-  $a = $matriz[2][2];
-  $c = $matriz[3][2];
-  $d = $matriz[3][3];
-  $b = $matriz[2][3];
+  $a = $array[2][2];
+  $c = $array[3][2];
+  $d = $array[3][3];
+  $b = $array[2][3];
   $f1c2 = $a + $c;
   $f1c3 = $b + $d;
   $f2c1 = $a + $b;
   $f3c1 = $c + $d;
-  $matriz[1][2] = $f1c2;
-  $matriz[1][3] = $f1c3;
-  $matriz[2][1] = $f2c1;
-  $matriz[3][1] = $f3c1;
-  $m = $matriz[1][2];
-  $n = $matriz[1][3];
-  $o = $matriz[2][1];
-  $p = $matriz[3][1];
-  delete $matriz [1][1];
+  $array[1][2] = $f1c2;
+  $array[1][3] = $f1c3;
+  $array[2][1] = $f2c1;
+  $array[3][1] = $f3c1;
+  $m = $array[1][2];
+  $n = $array[1][3];
+  $o = $array[2][1];
+  $p = $array[3][1];
+  delete $array [1][1];
   #IMPRIME LA MATRIZ VISIBLE AL USUARIO
-  sub imprimir_facil{
+  sub print_array {
     for ($i = 1; $i <= 3; $i++) {
       for ($j = 1; $j <= 3; $j++) {
         if ( $i == 1 && $j == 1) {
@@ -107,7 +106,7 @@ sub matriz_facil{
                   print("|   D  |")
                 }
                 else {
-                  print "| $matriz[$i][$j] |";
+                  print "| $array[$i][$j] |";
                 }
               }
             }
@@ -116,165 +115,146 @@ sub matriz_facil{
       }
       print(" \n")
     }
+    &require_answers
   }
   #PREGUNTA AL USUARIO LOS VALORES DE LAS CASILLAS
-  sub casillas_facil {
+  sub require_answers {
+    $answers;
+    $answerIndex = 0;
     do {
-      print("Escriba el valor de la casilla A: \n");
-      $casilla1 = <STDIN>;
-      if (0 >= $casilla1 || 9 < $casilla1) {
-        print("SELECCIONE UNICAMENTE NUMEROS DEL 1 AL 9. INTENTE DE NUEVO.\n");
+      given ($answerIndex) {
+        when ($answerIndex == 0) {
+          say "Escriba el valor de la casilla A: \n";
+        }
+        when ($answerIndex == 1) {
+          say "Escriba el valor de la casilla B: \n";
+        }
+        when ($answerIndex == 2) {
+          say "Escriba el valor de la casilla C: \n";
+        }
+        when ($answerIndex == 3) {
+          say "Escriba el valor de la casilla D: \n";
+        }
       }
-    } while (0 >= $casilla1 || 9 < $casilla1);
-
-    do {
-      print("Escriba el valor de la casilla B: \n");
-      $casilla2 = <STDIN>;
-      if (0 >= $casilla2 || 9 < $casilla2) {
-        print("SELECCIONE UNICAMENTE NUMEROS DEL 1 AL 9. INTENTE DE NUEVO.\n");
-      }
-    } while (0 >= $casilla2 || 9 < $casilla2);
-
-    do {
-      print("Escriba el valor de la casilla C: \n");
-      $casilla3 = <STDIN>;
-      if (0 >= $casilla3 || 9 < $casilla3) {
-        print("SELECCIONE UNICAMENTE NUMEROS DEL 1 AL 9. INTENTE DE NUEVO.\n");
-      }
-    } while (0 >= $casilla3 || 9 < $casilla3);
-
-    do {
-      print("Escriba el valor de la casilla D: \n");
-      $casilla4 = <STDIN>;
-      if (0 >= $casilla4 || 9 < $casilla4) {
-        print("SELECCIONE UNICAMENTE NUMEROS DEL 1 AL 9. INTENTE DE NUEVO.\n");
-      }
-    } while (0 >= $casilla4 || 9 < $casilla4);
-    $w = $casilla1+$casilla2;
-    $x = $casilla3+$casilla4;
-    $y = $casilla1+$casilla3;
-    $z = $casilla2+$casilla4;
-  }
-  #PERMITE JUGAR Y REPETIR EL JUEGO EN CASO DE EQUIVOCARSE
-  sub jugar_denuevo_facil {
-  #do{
-  $c1 = 0;
-  $c2 = 0;
-  $c3 = 0;
-  $c4 = 0;
-  system ("cls");
-    & imprimir_facil;
-    & casillas_facil;
-    if ($casilla1 == $casilla2 || $casilla1 == $casilla3 || $casilla2 == $casilla4 || $casilla3 == $casilla4) {
-      print("AH CARAY, USTED NO PUEDE REPETIR EL MISMO NUMERO EN LA MISMA FILA O COLUMNA. \n");
-      do {
-        print("OPCIONES \n");
-        print("1) Jugar de nuevo\n");
-        print("2) Ver respuesta\n");
-        print("3) Salir del juego\n");
-        print("Seleccione la opcion que desee hacer: \n");
-        $option = <STDIN>;
-        if (0 >= $option || 3 < $option) {
-          print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
-        }
-      } while (0 >= $option || 3 < $option);
-    } else{
-      if ($m != $y || $n != $z || $o != $w || $p != $x) {
-        if ($m != $y) {
-          $c1 = $c1 + 1;
-        }
-        if ($n != $z) {
-          $c2 = $c2 + 1;
-        }
-        if ($o != $w) {
-          $c3 = $c3 + 1;
-        }
-        if ($p != $x) {
-          $c4 = $c4 + 1;
-        }
-        $errores = $c1 + $c2 + $c3 + $c4;
-        if ($errores == 1) {
-          print("AH CARAY, USTED TIENE $errores ERROR EN SU MATEMATICA. \n");
-        } else {
-          print("AH CARAY, USTED TIENE $errores ERRORES EN SU MATEMATICA. \n");
-        }
-        do {
-          print("OPCIONES \n");
-          print("1) Jugar de nuevo\n");
-          print("2) Ver respuesta\n");
-          print("3) Salir del juego\n");
-          print("Seleccione la opcion que desee hacer: \n");
-          $option = <STDIN>;
-          if (0 >= $option || 3 < $option) {
-            print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
-          }
-        } while (0 >= $option || 3 < $option);
+      $key = <STDIN>;
+      if ($key >= 0 && $key < 10 ) {
+        $answers[$answerIndex] = $key;
+        $answerIndex++;
       } else {
-        print("USTED ES UN VERDADERO CAMPEON. HA PODIDO RESOLVER EL ENIGMA\n");
-        do {
-          print("PRESIONE LA TECLA 1 PARA regresar al Menu Principal\n");
-          $option = <STDIN>;
-          if ($option != 1) {
-            print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
-          }
-        } while ($option != 1);
-        goto & menu;                                              #REGRESA AL MENU PRINCIPAL PERO NO LEE LA NUEVA ENTRADA!!!!
+        say "SELECCIONE UNICAMENTE NUMEROS DEL 1 AL 9. INTENTE DE NUEVO.\n";
       }
-    }
+    } while ($answerIndex < 4);
+    $w = $answers[0] + $answers[1];
+    $x = $answers[2] + $answers[3];
+    $y = $answers[0] + $answers[2];
+    $z = $answers[1] + $answers[3];
+    &verify_answers
   }
-  system ("cls");
-  & jugar_denuevo_facil;
-    if ($option == 1){
-      do {
-        system ("cls");
-        & jugar_denuevo_facil;
-      } while ($option == 1);
 
-      if ($option == 2) {
-        system ("cls");
-        for ($i = 1; $i <= 3; $i++) {
-          for ($j = 1; $j <= 3; $j++) {
-            print "| $matriz[$i][$j] |";
-          }
-          print(" \n")
+  sub verify_answers {
+    if ($m != $y || $n != $z || $o != $w || $p != $x) {
+      if ($m != $y) {
+        $c1 = $c1 + 1;
+      }
+      if ($n != $z) {
+        $c2 = $c2 + 1;
+      }
+      if ($o != $w) {
+        $c3 = $c3 + 1;
+      }
+      if ($p != $x) {
+        $c4 = $c4 + 1;
+      }
+      $errores = $c1 + $c2 + $c3 + $c4;
+      if ($errores) {
+        print("AH CARAY, USTED TIENE $errores ERRORES EN SU MATEMATICA. \n");
+        $c1 = 0; $c2 = 0; $c3 = 0; $c4 = 0;
+        if ($answers[0] == $answers[1] || $answers[0] == $answers[2] || $answers[1] == $answers[3] || $answers[2] == $answers[3]) {
+          print("USTED NO PUEDE REPETIR EL MISMO NUMERO EN LA MISMA FILA O COLUMNA. \n");
         }
-        print("ANIMO, A LA SIGUIENTE PODRA RESOLVERLO. NO DESISTA\n");
-        do {
-          print("PRESIONE LA TECLA 1 PARA REGRESAR AL MENU PRINCIPAL\n");
-          $optionq = <STDIN>;
-          if ($optionq != 1) {
-            print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
-          }
-        } while ($optionq != 1);
-          goto & menu;                                               #REGRESA AL MENU PRINCIPAL PERO NO LEE LA NUEVA ENTRADA!!!!
+        &dead_options
       } else {
-          exit;
+        &dead_options
       }
     } else {
-      if ($option == 2) {
-        system ("cls");
-        for ($i = 1; $i <= 3; $i++) {
-          for ($j = 1; $j <= 3; $j++) {
-            print "| $matriz[$i][$j] |";
-          }
-          print(" \n")
+      print("USTED ES UN VERDADERO CAMPEON. HA PODIDO RESOLVER EL ENIGMA\n");
+      do {
+        print("PRESIONE LA TECLA 1 PARA regresar al Menu Principal\n");
+        $keyEnd = <STDIN>;
+        if ($keyEnd != 1) {
+          print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
         }
-        print("ANIMO, A LA SIGUIENTE PODRA RESOLVERLO. NO DESISTA\n");
-        do {
-          print("PRESIONE LA TECLA 1 PARA REGRESAR AL MENU PRICIPAL\n");
-          $optionq = <STDIN>;
-          if ($optionq != 1) {
-            print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
-          }
-        } while ($optionq != 1);
-          #REGRESA AL MENU PRINCIPAL PERO NO LEE LA NUEVA ENTRADA!!!!
-          goto & menu;
-      } else {
-        if ($option == 3) {
-          exit;
-        }
-      }
+      } while ($keyEnd != 1);
+      #REGRESA AL MENU PRINCIPAL PERO NO LEE LA NUEVA ENTRADA!!!!
+      &menu;
     }
   }
+  #PERMITE JUGAR Y REPETIR EL JUEGO EN CASO DE EQUIVOCARSE
+  sub easy_play_again {
+    #do{
+    $c1 = 0;
+    $c2 = 0;
+    $c3 = 0;
+    $c4 = 0;
+    system ("clear");
+    & print_array;
+    & require_answers;
+  }
+
+  sub dead_options {
+    do {
+      &read_and_print_file('options.txt');    
+      $keyDead = <STDIN>;
+      if ($keyDead == 0 || $keyDead > 3) {
+        print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
+      } else {
+        given ($keyDead) {
+          when ($keyDead == 1) {
+            &easy_play_again;
+          }
+          when ($keyDead == 2) {
+            # Non asigned code
+            print("N SE HA ASIGNADO UNA FUNCIÓN A ESTE CÓDIGO");
+            &show_correct_answers;
+          }
+          when ($keyDead == 3) {
+            &menu;
+          }
+        }
+      }
+    } while ($keyDead == 0 || $keyDead > 3);
+  }
+
+  sub show_correct_answers {
+    system ("clear");
+    for ($i = 1; $i <= 3; $i++) {
+      for ($j = 1; $j <= 3; $j++) {
+        print "| $array[$i][$j] |";
+      }
+      print(" \n")
+    }
+    print("ANIMO, A LA SIGUIENTE PODRA RESOLVERLO. NO DESISTA\n");
+    do {
+      print("PRESIONE LA TECLA 1 PARA REGRESAR AL MENU PRINCIPAL\n");
+      $optionq = <STDIN>;
+      if ($optionq != 1) {
+        print("OPCION INVALIDA. INTENTE DE NUEVO.\n");
+      } else {
+        &menu;          
+      }
+    } while ($optionq != 1);
+  }
+
+  sub read_and_print_file {
+    open(my $fh, '<:encoding(UTF-8)', @_)
+    or die "No se ha podido leer el archivo '@_' $!";
+    while (my $row = <$fh>) {
+      chomp $row;
+      print "$row\n";
+    }
+  }
+  system ("clear");
+  &easy_play_again;
+}
 
 & menu;

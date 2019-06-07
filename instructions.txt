@@ -1,0 +1,4 @@
+Hay que rellenar las casillas correspondiente con numeros del 1 al 9, teniendo en cuenta que:
+1. Cada fila o columna debe sumar lo indicado en la casilla. Cuando una casilla indica dos valores, separados por '/',
+el valor de la izquiera representa la suma de la fila, y el valor de la derecha la suma de la columna.
+2. No se puede repetir un mismo numero ya sea por fila o columna.

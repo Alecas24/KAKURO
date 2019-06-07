@@ -1,0 +1,5 @@
+OPCIONES
+1) Jugar de nuevo
+2) Ver respuesta
+3) Salir del juego
+Seleccione la opcion que desee hacer:
